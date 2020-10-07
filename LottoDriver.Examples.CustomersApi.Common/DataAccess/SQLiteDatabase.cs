@@ -4,7 +4,8 @@ using System.Data.SQLite;
 
 namespace LottoDriver.Examples.CustomersApi.Common.DataAccess
 {
-    public class Database : IDatabase
+    // ReSharper disable once InconsistentNaming
+    public class SQLiteDatabase : IDatabase
     {
         private const string ConnectionString = "Data Source={0};Version=3;DateTimeKind=Utc";
 
@@ -18,7 +19,7 @@ namespace LottoDriver.Examples.CustomersApi.Common.DataAccess
 
         private SQLiteTransaction _transaction;
 
-        public Database(string dbFilePath)
+        public SQLiteDatabase(string dbFilePath)
         {
             _cn = new SQLiteConnection(string.Format(ConnectionString, dbFilePath));
         }

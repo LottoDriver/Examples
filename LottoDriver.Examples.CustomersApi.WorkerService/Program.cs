@@ -55,7 +55,7 @@ namespace LottoDriver.Examples.CustomersApi.WorkerService
                         return client;
                     });
 
-                    services.AddTransient<IDatabase>(_ => new Database(configuration.GetValue<string>("AppSettings:DatabasePath")));
+                    services.AddTransient<IDatabase>(_ => new SQLiteDatabase(configuration.GetValue<string>("AppSettings:DatabasePath")));
 
                     services.AddHostedService<Worker>();
                 });

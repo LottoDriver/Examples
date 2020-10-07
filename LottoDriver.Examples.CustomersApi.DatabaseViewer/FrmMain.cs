@@ -21,7 +21,7 @@ namespace LottoDriver.Examples.CustomersApi.DatabaseViewer
             {
                 if (_database == null)
                 {
-                    _database = new Database(ConfigurationManager.AppSettings["DatabasePath"]);
+                    _database = new SQLiteDatabase(ConfigurationManager.AppSettings["DatabasePath"]);
                 }
 
                 _database.BeginTransaction();

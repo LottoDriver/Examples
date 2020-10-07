@@ -22,7 +22,7 @@ namespace LottoDriver.Examples.CustomersApi.WinService
         {
             InitializeComponent();
 
-            _database = new Database(ConfigurationManager.AppSettings["DatabasePath"]);
+            _database = new SQLiteDatabase(ConfigurationManager.AppSettings["DatabasePath"]);
 
             _apiClient = new CustomersApiClient(
                 ConfigurationManager.AppSettings["LottoDriverApiUrl"],
