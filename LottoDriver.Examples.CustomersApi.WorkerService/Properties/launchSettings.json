@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "LottoDriver.CustomersApi.Demo": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
