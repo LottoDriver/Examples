@@ -1,9 +1,11 @@
 # LottoDriver SDK Usage Examples
 
 This repository contains examples for using LottoDriver SDK.
-It's best to open the LottoDriver.Examples.sln file using VS 2019 because WorkerService uses .NET Core 3.1 which is not supported in earlier VS versions.
-However, if you must use VS2017 or earlier, you can unload the WorkerService example. 
 
+If you are targeting .NET Framework, start with LottoDriver.Examples.NetFramework.sln solution file. If you are using Visual Studio IDE, VS2017 or later is required.
+  
+If you are targeting .NET Core, start with LottoDriver.Examples.NetCore.sln solution file. If you are using Visual Studion IDE, VS2019 or later is required. 
+  
 The examples include:
 - WindowsService - Demonstrates using LottoDriver SDK in a WindowsService. If you are targeting .NET Framework in your applications, start here.
 - WorkerService - Demonstrates using LottoDriver SDK in a WorkerService. If you are targeting .NET Core in your applications, start here.
