@@ -4,7 +4,7 @@ This repository contains examples for using LottoDriver SDK.
 
 If you are targeting **.NET Framework**, start with **LottoDriver.Examples.NetFramework.sln** solution file. If you are using Visual Studio IDE, VS2017 or later is required.
   
-If you are targeting **.NET Core**, start with **LottoDriver.Examples.NetCore.sln** solution file. If you are using Visual Studion IDE, VS2019 or later is required. 
+If you are targeting **.NET Core**, start with **LottoDriver.Examples.NetCore.sln** solution file. If you are using Visual Studio IDE, VS2019 or later is required. 
   
 The examples include:
 - WindowsService - Demonstrates using LottoDriver SDK in a WindowsService. If you are targeting .NET Framework in your applications, start here.
