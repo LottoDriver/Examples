@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "LottoDriver.CustomersApi.Demo": {
+    "LottoDriver.Examples.CustomersApi.WorkerService": {
       "commandName": "Project",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"

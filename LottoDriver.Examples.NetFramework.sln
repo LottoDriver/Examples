@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LottoDriver.Examples.Custom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LottoDriver.Examples.CustomersApi.DatabaseViewer", "LottoDriver.Examples.CustomersApi.DatabaseViewer\LottoDriver.Examples.CustomersApi.DatabaseViewer.csproj", "{1098D0CE-AFDA-4DD5-A010-63F81CBEF614}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LottoDriver.CustomersApi.Dto", "LottoDriver.CustomersApi.Dto\LottoDriver.CustomersApi.Dto.csproj", "{FA725B18-E2E6-4284-8C13-BAD371712897}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LottoDriver.CustomersApi.Sdk", "LottoDriver.CustomersApi.Sdk\LottoDriver.CustomersApi.Sdk.csproj", "{A4323C75-7E81-40B5-9C78-E30F934FECD5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{1098D0CE-AFDA-4DD5-A010-63F81CBEF614}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1098D0CE-AFDA-4DD5-A010-63F81CBEF614}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1098D0CE-AFDA-4DD5-A010-63F81CBEF614}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA725B18-E2E6-4284-8C13-BAD371712897}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA725B18-E2E6-4284-8C13-BAD371712897}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA725B18-E2E6-4284-8C13-BAD371712897}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA725B18-E2E6-4284-8C13-BAD371712897}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4323C75-7E81-40B5-9C78-E30F934FECD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4323C75-7E81-40B5-9C78-E30F934FECD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4323C75-7E81-40B5-9C78-E30F934FECD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4323C75-7E81-40B5-9C78-E30F934FECD5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

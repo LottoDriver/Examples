@@ -36,12 +36,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LottoDriver.CustomersApi.Dto, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LottoDriver.CustomersApi.Sdk.1.0.4\lib\net461\LottoDriver.CustomersApi.Dto.dll</HintPath>
-    </Reference>
-    <Reference Include="LottoDriver.CustomersApi.Sdk, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LottoDriver.CustomersApi.Sdk.1.0.4\lib\net461\LottoDriver.CustomersApi.Sdk.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -74,6 +68,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LottoDriver.CustomersApi.Dto\LottoDriver.CustomersApi.Dto.csproj">
+      <Project>{fa725b18-e2e6-4284-8c13-bad371712897}</Project>
+      <Name>LottoDriver.CustomersApi.Dto</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LottoDriver.CustomersApi.Sdk\LottoDriver.CustomersApi.Sdk.csproj">
+      <Project>{a4323c75-7e81-40b5-9c78-e30f934fecd5}</Project>
+      <Name>LottoDriver.CustomersApi.Sdk</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LottoDriver.Examples.CustomersApi.Common\LottoDriver.Examples.CustomersApi.Common.csproj">
       <Project>{77162d32-fb25-4ad6-972e-2a08324f65c6}</Project>
       <Name>LottoDriver.Examples.CustomersApi.Common</Name>

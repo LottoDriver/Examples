@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LottoDriver.CustomersApi.Sdk" Version="1.0.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.8" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="3.1.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
@@ -15,6 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LottoDriver.CustomersApi.Dto\LottoDriver.CustomersApi.Dto.csproj" />
+    <ProjectReference Include="..\LottoDriver.CustomersApi.Sdk\LottoDriver.CustomersApi.Sdk.csproj" />
     <ProjectReference Include="..\LottoDriver.Examples.CustomersApi.Common\LottoDriver.Examples.CustomersApi.Common.csproj" />
   </ItemGroup>
 </Project>
