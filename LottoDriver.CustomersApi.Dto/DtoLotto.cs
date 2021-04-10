@@ -14,6 +14,11 @@ namespace LottoDriver.CustomersApi.Dto
         public int Id { get; set; }
 
         /// <summary>
+        /// Country where this lotto is being organized
+        /// </summary>
+        public DtoCountry Country { get; private set; }
+
+        /// <summary>
         /// Name of the lottery (english).
         /// Betting companies should handle the translations themselves,
         /// since each company may have different constraints in length, character encoding etc.
@@ -36,5 +41,10 @@ namespace LottoDriver.CustomersApi.Dto
         /// List of draws for this lottery that have some changes.
         /// </summary>
         public List<DtoLottoDraw> Draws { get; set; }
+
+        internal void SetCountry(DtoCountry country)
+        {
+            Country = country;
+        }
     }
 }

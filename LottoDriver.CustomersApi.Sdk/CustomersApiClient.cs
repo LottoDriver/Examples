@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -19,6 +20,15 @@ namespace LottoDriver.CustomersApi.Sdk
     /// <param name="data">Data received by the LottoDriver server (changed data)</param>
     /// <returns></returns>
     public delegate bool DataReceivedHandler(ICustomersApiClient source, DtoLotteriesResponse data);
+
+    /// <summary>
+    /// Delegate handler for DrawsReceived event
+    /// </summary>
+    /// <param name="source">The instance that fired the event</param>
+    /// <param name="draws">List of draws received by the LottoDriver server (changed draws)</param>
+    /// <param name="lastSeqNo">Last sequence number that should be saved to the client's persistent storage if the event is processed successfully</param>
+    /// <returns></returns>
+    public delegate bool DrawsReceivedHandler(ICustomersApiClient source, List<DtoLottoDraw> draws, int lastSeqNo);
 
     /// <summary>
     /// Delegate handler for <see cref="ICustomersApiClient.Error" /> and <see cref="ICustomersApiClient.CallbackError"/> events.
@@ -46,6 +56,9 @@ namespace LottoDriver.CustomersApi.Sdk
 
         /// <inheritdoc />
         public event DataReceivedHandler DataReceived;
+
+        /// <inheritdoc />
+        public event DrawsReceivedHandler DrawsReceived;
 
         /// <inheritdoc />
         public event ErrorHandler CallbackError;
@@ -85,6 +98,90 @@ namespace LottoDriver.CustomersApi.Sdk
             _connected = false;
         }
 
+        /// <inheritdoc />
+        public async Task<List<DtoLotto>> GetLotteriesAsync()
+        {
+            if (!IsTokenValid())
+            {
+                await Authenticate().ConfigureAwait(false);
+            }
+
+            using (var response = await _httpClient.GetAsync($"lotteries/active").ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+
+                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var dto = JsonConvert.DeserializeObject<DtoLotteriesResponse>(json);
+
+                ConnectHierarchy(dto);
+
+                return dto.Countries.SelectMany(c => c.Lotteries).ToList();
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task<List<DtoLottoDraw>> GetDrawsAsync(int lottoId, DateTime dateFrom, DateTime dateTo)
+        {
+            var dateFromUtc = dateFrom.ToUniversalTime();
+            var dateToUtc = dateTo.ToUniversalTime();
+
+            if (!IsTokenValid())
+            {
+                await Authenticate().ConfigureAwait(false);
+            }
+
+            using (var response = await _httpClient.GetAsync($"lotteries/{lottoId}/draws?dateFrom={dateFromUtc:O}&dateTo={dateToUtc:O}").ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+
+                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var dto = JsonConvert.DeserializeObject<DtoLotteriesResponse>(json);
+
+                ConnectHierarchy(dto);
+
+                return dto.Countries
+                    .SelectMany(c => c.Lotteries)
+                    .SelectMany(l => l.Draws)
+                    .ToList();
+            }
+        }
+
+        /// <inheritdoc />
+        public Task<List<DtoLottoDraw>> GetDrawsAsync(int lottoId, DateTime day, TimeZoneInfo timeZoneInfo = null)
+        {
+            timeZoneInfo = timeZoneInfo ?? TimeZoneInfo.Local;
+            day = DateTime.SpecifyKind(day.Date, DateTimeKind.Unspecified);
+
+            var dateFromUtc = TimeZoneInfo.ConvertTimeToUtc(day, timeZoneInfo);
+            var dateToUtc = dateFromUtc.AddDays(1);
+
+            return GetDrawsAsync(lottoId, dateFromUtc, dateToUtc);
+        }
+        
+        /// <inheritdoc />
+        public async Task<DtoLottoDraw> GetDrawAsync(long drawId)
+        {
+            if (!IsTokenValid())
+            {
+                await Authenticate().ConfigureAwait(false);
+            }
+
+            using (var response = await _httpClient.GetAsync($"lotteries/draws/{drawId}").ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+
+                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var dto = JsonConvert.DeserializeObject<DtoLotteriesResponse>(json);
+
+                ConnectHierarchy(dto);
+
+                return dto.Countries
+                    .SelectMany(c => c.Lotteries)
+                    .SelectMany(l => l.Draws)
+                    .FirstOrDefault();
+            }
+        }
+
         private void TimerElapsed(object state)
         {
             try
@@ -95,9 +192,23 @@ namespace LottoDriver.CustomersApi.Sdk
                 if (_lastPollTime.AddSeconds(15) > utcNow) return;
                 _lastPollTime = utcNow;
 
-                var data = GetLotteries().Result;
+                var data = GetLotteriesFromFeed().Result;
 
+                ConnectHierarchy(data);
+
+                var eventHandled = false;
+                
                 if (OnDataReceived(data))
+                {
+                    eventHandled = true;
+                }
+
+                if (OnDrawsReceived(data))
+                {
+                    eventHandled = true;
+                }
+
+                if (eventHandled)
                 {
                     _lastSeqNo = data.To;
 
@@ -120,14 +231,14 @@ namespace LottoDriver.CustomersApi.Sdk
             }
         }
 
-        private async Task<DtoLotteriesResponse> GetLotteries()
+        private async Task<DtoLotteriesResponse> GetLotteriesFromFeed()
         {
             if (!IsTokenValid())
             {
-                await Authenticate();
+                await Authenticate().ConfigureAwait(false);
             }
 
-            using (var response = await _httpClient.GetAsync($"lotteries?lastSeqNo={_lastSeqNo}"))
+            using (var response = await _httpClient.GetAsync($"lotteries?lastSeqNo={_lastSeqNo}").ConfigureAwait(false))
             {
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
@@ -136,7 +247,7 @@ namespace LottoDriver.CustomersApi.Sdk
 
                 response.EnsureSuccessStatusCode();
 
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 return JsonConvert.DeserializeObject<DtoLotteriesResponse>(json);
             }
         }
@@ -150,11 +261,11 @@ namespace LottoDriver.CustomersApi.Sdk
                 new KeyValuePair<string, string>("grant_type", "client_credentials")
             });
 
-            using (var response = await _httpClient.PostAsync("token", content))
+            using (var response = await _httpClient.PostAsync("token", content).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
 
-                var tokenResponseJson = await response.Content.ReadAsStringAsync();
+                var tokenResponseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(tokenResponseJson);
 
@@ -182,6 +293,22 @@ namespace LottoDriver.CustomersApi.Sdk
             return _tokenExpiresAt > DateTime.UtcNow;
         }
 
+        private void ConnectHierarchy(DtoLotteriesResponse data)
+        {
+            foreach (var country in data.Countries)
+            {
+                foreach (var lotto in country.Lotteries)
+                {
+                    lotto.SetCountry(country);
+
+                    foreach (var draw in lotto.Draws)
+                    {
+                        draw.SetLotto(lotto);
+                    }
+                }
+            }
+        }
+
         private bool OnDataReceived(DtoLotteriesResponse data)
         {
             try
@@ -189,6 +316,26 @@ namespace LottoDriver.CustomersApi.Sdk
                 if (data.Countries.Count == 0 && data.From == data.To) return false;
 
                 return DataReceived?.Invoke(this, data) ?? false;
+            }
+            catch (Exception ex)
+            {
+                OnCallbackError(ex);
+                return false;
+            }
+        }
+
+        private bool OnDrawsReceived(DtoLotteriesResponse data)
+        {
+            try
+            {
+                if (data.Countries.Count == 0 && data.From == data.To) return false;
+
+                var draws = data.Countries
+                    .SelectMany(c => c.Lotteries)
+                    .SelectMany(l => l.Draws)
+                    .ToList();
+
+                return DrawsReceived?.Invoke(this, draws, data.To) ?? false;
             }
             catch (Exception ex)
             {

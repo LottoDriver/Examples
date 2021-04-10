@@ -14,6 +14,11 @@ namespace LottoDriver.CustomersApi.Dto
         public long Id { get; set; }
 
         /// <summary>
+        /// Lottery type
+        /// </summary>
+        public DtoLotto Lotto { get; private set; }
+
+        /// <summary>
         /// The time when the draw round was originally scheduled.
         /// </summary>
         public DateTime ScheduledTimeUtc { get; set; }
@@ -47,6 +52,11 @@ namespace LottoDriver.CustomersApi.Dto
         /// The list is empty if the result is not known yet.
         /// </summary>
         public List<int> Result { get; set; }
+
+        internal void SetLotto(DtoLotto lotto)
+        {
+            Lotto = lotto;
+        }
     }
 
     /// <summary>

@@ -107,7 +107,9 @@ namespace LottoDriver.Examples.CustomersApi.WorkerService
                 throw;
             }
 
-            _logger.LogWarning("Data received: {0}", JsonConvert.SerializeObject(data));
+            // Data object hierarchy is bi-directionally connected. If the hierarchy is to be serialized, the simplest way is to set loop handling to ignore.
+            // Alternatively, read-only properties could be ignored since references from child to parent are not publicly writable.
+            _logger.LogWarning("Data received: {0}", JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
 
             // return true on successful processing, false otherwise
             // write data.To value as last seq no to DB
@@ -190,10 +192,7 @@ namespace LottoDriver.Examples.CustomersApi.WorkerService
                     RecommendedClosingTimeUtc = dtoDraw.RecommendedClosingTimeUtc,
                     Status = (LottoDrawStatus)dtoDraw.Status,
                     LottoDriverDrawId = dtoDraw.Id,
-                    Result = dtoDraw.Result.Count > 0
-                        ? dtoDraw.Result.Aggregate("", (acc, num) => acc + "," + num)
-                            .Substring(1) // remove leading ","
-                        : null
+                    Result = dtoDraw.Result.Count > 0 ? string.Join(",", dtoDraw.Result) : null
                 };
 
                 // insert the new draw in the local database
@@ -206,10 +205,7 @@ namespace LottoDriver.Examples.CustomersApi.WorkerService
                 draw.DrawTimeUtc = dtoDraw.DrawTimeUtc;
                 draw.RecommendedClosingTimeUtc = dtoDraw.RecommendedClosingTimeUtc;
                 draw.Status = (LottoDrawStatus)dtoDraw.Status;
-                draw.Result = dtoDraw.Result.Count > 0
-                    ? dtoDraw.Result.Aggregate("", (acc, num) => acc + "," + num)
-                        .Substring(1) // remove leading ","
-                    : null;
+                draw.Result = dtoDraw.Result.Count > 0 ? string.Join(",", dtoDraw.Result) : null;
 
                 // update the draw in the local database
                 _database.LottoDrawUpdate(draw);
