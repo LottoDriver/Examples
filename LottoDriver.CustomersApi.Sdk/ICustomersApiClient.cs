@@ -20,19 +20,8 @@ namespace LottoDriver.CustomersApi.Sdk
 
         /// <summary>
         /// DataReceived event is raised when LottoDriver sends new data.
-        /// Clients should handle this event OR <see cref="DrawsReceived"/> event. No need to handle both.
-        /// The only difference between these two events is that this event provides a hierarchical view of the data,
-        /// while <see cref="DrawsReceived"/> provides a list of draws.
         /// </summary>
         event DataReceivedHandler DataReceived;
-
-        /// <summary>
-        /// DrawsReceived event is raised when LottoDriver sends the list of changed draws.
-        /// Clients should handle this event OR <see cref="DataReceived"/> event. No need to handle both.
-        /// The only difference between these two events is that this event provides a list of draws
-        /// while <see cref="DataReceived"/> provides a hierarchical view of the data.
-        /// </summary>
-        event DrawsReceivedHandler DrawsReceived;
 
         /// <summary>
         /// Error event is raised when the API client experiences an internal error

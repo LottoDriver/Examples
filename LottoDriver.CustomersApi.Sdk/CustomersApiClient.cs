@@ -22,15 +22,6 @@ namespace LottoDriver.CustomersApi.Sdk
     public delegate bool DataReceivedHandler(ICustomersApiClient source, DtoLotteriesResponse data);
 
     /// <summary>
-    /// Delegate handler for DrawsReceived event
-    /// </summary>
-    /// <param name="source">The instance that fired the event</param>
-    /// <param name="draws">List of draws received by the LottoDriver server (changed draws)</param>
-    /// <param name="lastSeqNo">Last sequence number that should be saved to the client's persistent storage if the event is processed successfully</param>
-    /// <returns></returns>
-    public delegate bool DrawsReceivedHandler(ICustomersApiClient source, List<DtoLottoDraw> draws, int lastSeqNo);
-
-    /// <summary>
     /// Delegate handler for <see cref="ICustomersApiClient.Error" /> and <see cref="ICustomersApiClient.CallbackError"/> events.
     /// </summary>
     /// <param name="source">The instance that fired the event</param>
@@ -56,9 +47,6 @@ namespace LottoDriver.CustomersApi.Sdk
 
         /// <inheritdoc />
         public event DataReceivedHandler DataReceived;
-
-        /// <inheritdoc />
-        public event DrawsReceivedHandler DrawsReceived;
 
         /// <inheritdoc />
         public event ErrorHandler CallbackError;
@@ -196,19 +184,7 @@ namespace LottoDriver.CustomersApi.Sdk
 
                 ConnectHierarchy(data);
 
-                var eventHandled = false;
-                
                 if (OnDataReceived(data))
-                {
-                    eventHandled = true;
-                }
-
-                if (OnDrawsReceived(data))
-                {
-                    eventHandled = true;
-                }
-
-                if (eventHandled)
                 {
                     _lastSeqNo = data.To;
 
@@ -316,26 +292,6 @@ namespace LottoDriver.CustomersApi.Sdk
                 if (data.Countries.Count == 0 && data.From == data.To) return false;
 
                 return DataReceived?.Invoke(this, data) ?? false;
-            }
-            catch (Exception ex)
-            {
-                OnCallbackError(ex);
-                return false;
-            }
-        }
-
-        private bool OnDrawsReceived(DtoLotteriesResponse data)
-        {
-            try
-            {
-                if (data.Countries.Count == 0 && data.From == data.To) return false;
-
-                var draws = data.Countries
-                    .SelectMany(c => c.Lotteries)
-                    .SelectMany(l => l.Draws)
-                    .ToList();
-
-                return DrawsReceived?.Invoke(this, draws, data.To) ?? false;
             }
             catch (Exception ex)
             {
