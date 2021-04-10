@@ -111,7 +111,9 @@ namespace LottoDriver.Examples.CustomersApi.WinService
                 throw;
             }
 
-            Console.WriteLine(JsonConvert.SerializeObject(data));
+            // Data object hierarchy is bi-directionally connected. If the hierarchy is to be serialized, the simplest way is to set loop handling to ignore.
+            // Alternatively, read-only properties could be ignored since references from child to parent are not publicly writable.
+            Console.WriteLine(JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
             return true;
         }
 
